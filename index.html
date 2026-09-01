@@ -1,13 +1,33 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>gifinder</title>
+    <meta name="description" content="Galería de GIFs con búsqueda local - EC1 F1 A2" />
+    <title>GIFinder - Galería de GIFs</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <header class="app-header">
+        <h1 class="app-title">🎬 GIFinder</h1>
+        <p class="app-subtitle">Galería local de GIFs con búsqueda inteligente</p>
+      </header>
+
+      <div class="search-container">
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="🔍 Buscar por título, autor, etiquetas o descripción..."
+          aria-label="Buscar GIFs"
+        />
+      </div>
+
+      <main id="gif-gallery" class="gif-gallery">
+        <!-- Los GIFs se cargan dinámicamente aquí -->
+      </main>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

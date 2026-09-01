@@ -1,60 +1,88 @@
-import './style.css'
-import heroImg from './assets/hero.png'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import { setupCounter } from './counter.ts'
+import './styles/main.css';
+import { getAllGifs, searchGifs } from './services/gif-collection.service';
+import { renderGifCards } from './components/gif-card.component';
+import { getElement } from './utils/dom.utils';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+/**
+ * Función principal que inicializa la aplicación
+ */
+function initApp(): void {
+  try {
+    // Obtener elementos del DOM con validación
+    const galleryContainer = getElement<HTMLElement>('#gif-gallery');
+    const searchInput = getElement<HTMLInputElement>('#search-input');
 
-<div class="ticks"></div>
+    // Renderizar todos los GIFs inicialmente
+    const allGifs = getAllGifs();
+    renderGifCards(allGifs, galleryContainer);
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+    // Configurar el evento de búsqueda
+    setupSearch(searchInput, galleryContainer);
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+    console.log('✅ Aplicación GIFinder inicializada correctamente');
+    console.log(`📊 Total de GIFs en la colección: ${allGifs.length}`);
+  } catch (error) {
+    console.error('❌ Error al inicializar la aplicación:', error);
+    
+    // Mostrar mensaje de error en la interfaz
+    const appElement = document.querySelector<HTMLElement>('#app');
+    if (appElement) {
+      appElement.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: #ff6b6b;">
+          <h2>❌ Error al cargar la aplicación</h2>
+          <p>Por favor, recarga la página</p>
+          <pre style="margin-top: 1rem; text-align: left; background: #1a1a1a; padding: 1rem; border-radius: 8px;">
+            ${error instanceof Error ? error.message : 'Error desconocido'}
+          </pre>
+        </div>
+      `;
+    }
+  }
+}
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+/**
+ * Configura el evento de búsqueda en el input
+ */
+function setupSearch(
+  searchInput: HTMLInputElement,
+  galleryContainer: HTMLElement
+): void {
+  searchInput.addEventListener('input', () => {
+    handleSearch(searchInput.value, galleryContainer);
+  });
+
+  // También permitir búsqueda con Enter
+  searchInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      handleSearch(searchInput.value, galleryContainer);
+    }
+  });
+}
+
+/**
+ * Maneja la búsqueda de GIFs
+ */
+function handleSearch(searchTerm: string, container: HTMLElement): void {
+  const trimmedTerm = searchTerm.trim();
+
+  // Si el campo está vacío, mostrar todos los GIFs
+  if (trimmedTerm === '') {
+    const allGifs = getAllGifs();
+    renderGifCards(allGifs, container);
+    console.log('🔄 Mostrando todos los GIFs');
+    return;
+  }
+
+  // Buscar GIFs que coincidan con el término
+  const results = searchGifs(trimmedTerm);
+  renderGifCards(results, container);
+
+  console.log(`🔍 Búsqueda: "${trimmedTerm}" - ${results.length} resultado(s)`);
+}
+
+// Inicializar la aplicación cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
