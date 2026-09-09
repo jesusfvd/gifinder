@@ -1,6 +1,6 @@
-# 🎬 GIFinder - Galería Local de GIFs
+# 🎬 GIFinder - Explorador de GIFs
 
-**EC1 F1 A2:** Galería local y búsqueda de GIFs con fundamentos de JavaScript y TypeScript
+**EC1 F2 A3:** Refactorización modular, detalle de GIF y gestión de estados
 
 **Asignatura:** Diseño Frontend con Frameworks  
 **Profesor:** Jalil Gerardo Espinoza Zepeda  
@@ -10,16 +10,17 @@
 
 ## 📋 Descripción
 
-GIFinder es una aplicación web que muestra una galería de GIFs almacenados localmente con funcionalidad de búsqueda inteligente. Construida con TypeScript vanilla y Vite, sin frameworks ni APIs externas.
+GIFinder es una aplicación web modular que muestra una galería de GIFs almacenados localmente con funcionalidad de búsqueda inteligente y visualización de detalles. Construida con TypeScript vanilla y Vite, organizada en componentes reutilizables.
 
-### ✨ Características Principales
+### ✨ Funcionalidades Actuales
 
 - 🎨 **Galería dinámica:** Muestra 8 GIFs con información completa
-- 🔍 **Búsqueda inteligente:** Busca por título, autor, etiquetas o descripción
+- 🔍 **Búsqueda inteligente:** Busca por título, autor, etiquetas y descripción
+- 🔎 **Detalle de GIF:** Ver información completa en modal
+- 📊 **Gestión de estados:** Comunicación clara del estado de la interfaz
 - 📱 **Diseño responsive:** Optimizado para computadora y móvil
-- ⚡ **Hot Module Replacement:** Desarrollo ágil con recarga instantánea
+- ⚡ **Arquitectura modular:** Separación de responsabilidades por módulos
 - 🎯 **TypeScript:** Type-safety completo sin uso de `any`
-- 🏗️ **Arquitectura organizada:** Separación clara de responsabilidades
 
 ---
 
@@ -35,7 +36,7 @@ GIFinder es una aplicación web que muestra una galería de GIFs almacenados loc
 ## 📦 Instalación
 
 ```bash
-# Clonar o navegar al proyecto
+# Navegar al proyecto
 cd gifinder
 
 # Instalar dependencias
@@ -70,19 +71,24 @@ pnpm preview
 ```
 gifinder/
 ├── src/
-│   ├── components/          # Componentes UI
-│   │   └── gif-card.component.ts
+│   ├── components/          # Componentes de interfaz
+│   │   ├── gallery.ts          - Renderizado de galería
+│   │   ├── gif-detail.ts       - Modal de detalle
+│   │   └── status.ts           - Mensajes de estado
+│   ├── data/                # Datos locales
+│   │   └── gifs.ts             - Colección de GIFs
 │   ├── models/              # Interfaces y tipos
-│   │   └── gif.interface.ts
+│   │   ├── gif.interface.ts    - Modelo Gif
+│   │   └── request-status.enum.ts - Estados
 │   ├── services/            # Lógica de negocio
-│   │   └── gif-collection.service.ts
+│   │   └── gif.service.ts      - Búsqueda y consulta
 │   ├── styles/              # Estilos CSS
 │   │   └── main.css
 │   ├── utils/               # Utilidades
-│   │   └── dom.utils.ts
+│   │   ├── dom.utils.ts        - Manejo del DOM
+│   │   └── text.ts             - Procesamiento de texto
 │   └── main.ts              # Punto de entrada
 ├── docs/                    # Documentación
-│   └── preguntas-cierre-f1-a2.md
 ├── public/                  # Archivos estáticos
 ├── dist/                    # Build de producción
 ├── index.html               # HTML principal
@@ -95,76 +101,88 @@ gifinder/
 
 ## 🎯 Funcionalidades Implementadas
 
-### 1. Modelo de Datos (models/)
-- ✅ Tipo `GifRating` con valores: `'g'`, `'pg'`, `'pg-13'`
-- ✅ Interfaz `Gif` con todos los campos requeridos
-- ✅ Campos opcionales: `username`, `description`
+### EC1 F1 A2 - Galería y Búsqueda Local
+- ✅ Modelo de datos tipado (`Gif`, `GifRating`)
+- ✅ Colección local con 8 GIFs
+- ✅ Galería generada dinámicamente
+- ✅ Búsqueda por título, autor, etiqueta y descripción
+- ✅ Manejo de cero resultados
 
-### 2. Colección Local (services/)
-- ✅ 8 GIFs diferentes con IDs únicos
-- ✅ Varios GIFs con descripciones
-- ✅ Función `getAllGifs()` para obtener todos
-- ✅ Función `searchGifs()` con búsqueda inteligente
-- ✅ Función `getGifById()` para búsqueda por ID
-
-### 3. Renderizado Dinámico (components/)
-- ✅ Función `createGifCard()` genera HTML para cada GIF
-- ✅ Función `renderGifCards()` renderiza múltiples tarjetas
-- ✅ Muestra: título, autor, clasificación, etiquetas, descripción
-- ✅ Mensaje "Sin descripción" cuando no hay
-- ✅ Mensaje "No se encontraron GIFs" cuando búsqueda vacía
-
-### 4. Búsqueda Inteligente
-- ✅ Busca en: título, autor, etiquetas, descripción
-- ✅ Ignora mayúsculas/minúsculas con `.toLowerCase()`
-- ✅ Ignora espacios con `.trim()`
-- ✅ Usa `filter()`, `map()`, `find()`, `includes()`, `some()`
-- ✅ Restaura todos los GIFs cuando el campo queda vacío
-
-### 5. Validación y Buenas Prácticas
-- ✅ Validación de elementos del DOM antes de usar
-- ✅ Funciones con parámetros tipados y tipos de retorno
-- ✅ Sin uso de `any`
-- ✅ Manejo de errores con try-catch
-- ✅ Comentarios JSDoc en funciones principales
-
-### 6. Diseño Responsive
-- ✅ Grid adaptativo con `auto-fill` y `minmax()`
-- ✅ Media queries para tablet y móvil
-- ✅ Imágenes con `object-fit: cover`
-- ✅ Transiciones suaves en hover
+### EC1 F2 A3 - Refactorización Modular
+- ✅ **Organización modular:** Separación por responsabilidades
+- ✅ **Detalle de GIF:** Modal con información completa
+- ✅ **Gestión de estados:** RequestStatus con 5 estados
+- ✅ **Delegación de eventos:** Click en botones "Ver detalle"
+- ✅ **Servicios:** `searchGifs()` y `findGifById()`
+- ✅ **Componentes:** gallery, gif-detail, status
+- ✅ **Datos separados:** Colección en `data/gifs.ts`
+- ✅ **Utilidades:** Normalización de texto
 
 ---
 
-## 🔍 Búsqueda
+## 🔍 Cómo Usar
 
-La búsqueda funciona en tiempo real mientras escribes. Busca en:
+### Búsqueda
+Escribe en el campo de búsqueda. La aplicación buscará en:
+- Títulos: "Gato Sorprendido", "Desarrollador"
+- Autores: "Giphy Studios", "DevLife"
+- Etiquetas: #programación, #gato, #celebración
+- Descripciones: "código", "sorpresa", "pizza"
 
-- **Título:** "Gato Sorprendido", "Desarrollador"
-- **Autor:** "Giphy Studios", "DevLife"
-- **Etiquetas:** #programación, #gato, #celebración
-- **Descripción:** "código", "sorpresa", "pizza"
-
-**Ejemplos de búsqueda:**
+**Ejemplos:**
 - `gato` → Encuentra "Gato Sorprendido"
 - `código` → Encuentra "Desarrollador Programando"
-- `giphy` → Encuentra GIFs de ese autor
 - `divertido` → Encuentra varios por etiqueta
+
+### Ver Detalle
+1. Haz clic en el botón "Ver detalle" de cualquier GIF
+2. Se abrirá un modal con toda la información
+3. Cierra con el botón ✕ o haciendo clic fuera del modal
+
+### Restaurar Galería
+Borra el texto del campo de búsqueda para ver todos los GIFs nuevamente.
 
 ---
 
-## 📊 Colección de GIFs
+## 📊 Estados de la Interfaz
 
-La aplicación incluye 8 GIFs de ejemplo:
+La aplicación comunica claramente su estado mediante `RequestStatus`:
 
-1. **Gato Sorprendido** - Con descripción
-2. **Desarrollador Programando** - Con descripción
-3. **Celebración con Confeti** - Sin descripción
-4. **Danza Épica** - Con descripción
-5. **Perro Emocionado** - Con descripción
-6. **Mente Explotando** - Sin descripción
-7. **Pizza Deliciosa** - Con descripción
-8. **Facepalm Épico** - Con descripción
+| Estado | Cuándo se muestra | Mensaje |
+|--------|-------------------|---------|
+| `Initial` | Al cargar la aplicación | "Listo para buscar GIFs" |
+| `Loading` | Durante una búsqueda | "Buscando GIFs..." |
+| `Success` | Búsqueda con resultados | "X resultados" |
+| `Empty` | Sin coincidencias | "No se encontraron resultados" |
+| `Error` | Error en la búsqueda | "Error al buscar GIFs" |
+
+---
+
+## 🏗️ Arquitectura Modular
+
+### components/
+Componentes de interfaz reutilizables:
+- `gallery.ts`: Renderiza tarjetas de GIFs
+- `gif-detail.ts`: Muestra y oculta detalle en modal
+- `status.ts`: Actualiza mensajes según RequestStatus
+
+### data/
+Datos de la aplicación:
+- `gifs.ts`: Colección local de 8 GIFs
+
+### models/
+Definiciones de tipos:
+- `gif.interface.ts`: Interfaz Gif y tipo GifRating
+- `request-status.enum.ts`: Estados de la interfaz
+
+### services/
+Lógica de negocio:
+- `gif.service.ts`: Búsqueda y consulta de GIFs
+
+### utils/
+Funciones auxiliares:
+- `dom.utils.ts`: Manejo seguro del DOM
+- `text.ts`: Normalización de texto
 
 ---
 
@@ -172,62 +190,64 @@ La aplicación incluye 8 GIFs de ejemplo:
 
 ### TypeScript
 - Interfaces y tipos personalizados
-- Type unions (`GifRating`)
-- Parámetros opcionales (`?`)
-- Type assertions
-- Genéricos en funciones (`<T extends HTMLElement>`)
+- Type unions y const assertions
+- Parámetros opcionales y valores predeterminados
+- Type assertions y validación de tipos
+- Genéricos en funciones
 
 ### JavaScript Moderno
+- ES Modules (import/export)
 - Arrow functions
 - Template literals
-- Destructuring
-- Array methods: `filter()`, `map()`, `find()`, `some()`, `includes()`
+- Destructuring con defaults
+- Array methods: `filter()`, `map()`, `find()`, `includes()`
+- Spread operator (`...`)
+- Nullish coalescing (`??`)
 - Optional chaining (`?.`)
-- Ternary operators
+
+### Patrones de Diseño
+- Separación de responsabilidades
+- Delegación de eventos
+- Single Responsibility Principle
+- Modularidad y reutilización
 
 ### DOM Manipulation
-- `querySelector()` y `querySelectorAll()`
+- Selección tipada de elementos
+- Validación de existencia
 - Event listeners
-- Dynamic HTML generation
-- `innerHTML` manipulation
-
-### CSS Moderno
-- CSS Grid
-- Flexbox
-- CSS Variables
-- Media queries
-- Transiciones y animaciones
+- Delegación de eventos con `data-*` attributes
+- Modal overlay
 
 ---
 
 ## 📚 Documentación Adicional
 
-Ver [`docs/preguntas-cierre-f1-a2.md`](./docs/preguntas-cierre-f1-a2.md) para respuestas detalladas sobre:
-- Diferencias entre interfaces y tipos
-- Funcionamiento de array methods
-- Gestión del estado
-- Validación del DOM
+Ver [`docs/preguntas-cierre-f2-a3.md`](./docs/preguntas-cierre-f2-a3.md) para respuestas sobre:
+- Organización modular
+- Delegación de eventos
+- RequestStatus
+- Función findGifById
 - Y más...
 
 ---
 
-## ✅ Checklist de Cumplimiento
+## ✅ Checklist EC1 F2 A3
 
-- [x] Modelo `Gif` con todos los campos
-- [x] Tipo `GifRating` con valores correctos
-- [x] Colección con mínimo 6 GIFs (tenemos 8)
-- [x] IDs únicos para cada GIF
-- [x] Varios GIFs con descripciones
-- [x] Renderizado dinámico desde TypeScript
-- [x] Búsqueda por título, autor, etiquetas, descripción
+- [x] Conserva funcionalidades de F1 A2
+- [x] Organización modular por responsabilidades
+- [x] Directorio `components/` con gallery, gif-detail, status
+- [x] Directorio `data/` con colección local
+- [x] Directorio `services/` con gif.service.ts
+- [x] Directorio `utils/` con text.ts
+- [x] RequestStatus con 5 estados
+- [x] Detalle de GIF en modal
+- [x] Botón "Ver detalle" en cada tarjeta
+- [x] Delegación de eventos con data-gif-id
+- [x] Cierre del modal funcional
+- [x] Limpieza del detalle al buscar
 - [x] Sin uso de `any`
-- [x] Funciones tipadas correctamente
-- [x] Validación de elementos DOM
-- [x] Diseño responsive
-- [x] Sin React, Fetch API ni Giphy API
-- [x] README.md actualizado
-- [x] Preguntas de cierre respondidas
 - [x] Compilación sin errores
+- [x] README actualizado
 
 ---
 
@@ -237,35 +257,32 @@ Ver [`docs/preguntas-cierre-f1-a2.md`](./docs/preguntas-cierre-f1-a2.md) para re
 - ❌ **No se usó Fetch API** (datos locales)
 - ❌ **No se usó Giphy API** (colección local)
 - ❌ **No se usó `any`** (tipos explícitos)
+- ❌ **No se usaron promesas** (operaciones síncronas)
+- ❌ **No se usó async/await** (no requerido aún)
 
 ---
 
-## 🎨 Capturas Recomendadas
+## 📝 Estado del Proyecto
 
-1. **Vista general** de la galería completa
-2. **Búsqueda activa** mostrando resultados filtrados
-3. **Sin resultados** mostrando mensaje de error
-4. **Vista móvil** en responsive
-5. **Detalle de tarjeta** con todos los campos
-6. **Consola del navegador** mostrando logs
+**EC1 F1 A2:** ✅ Completada  
+**EC1 F2 A3:** ✅ Completada
+
+Los datos aún son locales. La integración con Giphy API y React se realizará en fases posteriores.
 
 ---
 
-## 🔄 Git
+## 🔄 Historial de Desarrollo
 
 ```bash
-# Ver estado
-git status
-
-# Crear commit
-git add .
-git commit -m "feat: completar galeria y busqueda local"
-
-# Ver historial
+# Ver cambios
 git log --oneline
 
-# Subir cambios
-git push
+# Commits principales:
+# - feat: estructura inicial del proyecto
+# - feat: modelo de datos y colección local
+# - feat: galería y búsqueda implementada
+# - feat: refactorización modular
+# - feat: detalle de GIF y estados
 ```
 
 ---
@@ -273,7 +290,7 @@ git push
 ## 👨‍💻 Autor
 
 **Alumno UES** - Ingeniería en Software  
-Diseño Frontend con Frameworks - EC1 F1 A2
+Diseño Frontend con Frameworks - EC1 F2 A3
 
 ---
 

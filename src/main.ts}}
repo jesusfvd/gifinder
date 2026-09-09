@@ -1,0 +1,47 @@
+import './styles/main.css';
+import {
+  getAllGifs,
+  searchGifs,
+} from './services/gif-collection.service';
+import { renderGifCards } from './components/gif-card.component';
+import { getElement } from './utils/dom.utils';
+
+function initApp(): void {
+  const gallery = getElement<HTMLElement>('#gif-gallery');
+  const form = getElement<HTMLFormElement>('#search-form');
+  const input = getElement<HTMLInputElement>('#search-input');
+  const status = getElement<HTMLParagraphElement>('#search-status');
+
+  function showResults(searchValue: string): void {
+    const results = searchGifs(searchValue);
+    renderGifCards(results, gallery);
+
+    const label = results.length === 1 ? 'resultado' : 'resultados';
+    status.textContent = `${results.length} ${label}`;
+  }
+
+  form.addEventListener('submit', (event: SubmitEvent) => {
+    event.preventDefault();
+    showResults(input.value);
+  });
+
+  input.addEventListener('input', () => {
+    if (input.value.trim() === '') {
+      showResults('');
+    }
+  });
+
+  const firstSafeGif = getAllGifs().find((gif) => gif.rating === 'g');
+
+  console.log(
+    `Primer GIF clasificación G: ${firstSafeGif?.title ?? 'Ninguno'}`,
+  );
+
+  showResults('');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}

@@ -1,0 +1,90 @@
+import './styles/main.css';
+import { getAllGifs, searchGifs } from './services/gif-collection.service';
+import { renderGifCards } from './components/gif-card.component';
+import { getElement } from './utils/dom.utils';
+
+/**
+ * Función principal que inicializa la aplicación
+ */
+function initApp(): void {
+  try {
+    // Obtener elementos del DOM con validación
+    const galleryContainer = getElement<HTMLElement>('#gif-gallery');
+    const searchInput = getElement<HTMLInputElement>('#search-input');
+
+    // Renderizar todos los GIFs inicialmente
+    const allGifs = getAllGifs();
+    renderGifCards(allGifs, galleryContainer);
+
+    // Configurar el evento de búsqueda
+    setupSearch(searchInput, galleryContainer);
+
+    console.log('✅ Aplicación GIFinder inicializada correctamente');
+    console.log(`📊 Total de GIFs en la colección: ${allGifs.length}`);
+  } catch (error) {
+    console.error('❌ Error al inicializar la aplicación:', error);
+    
+    // Mostrar mensaje de error en la interfaz
+    const appElement = document.querySelector<HTMLElement>('#app');
+    if (appElement) {
+      appElement.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: #ff6b6b;">
+          <h2>❌ Error al cargar la aplicación</h2>
+          <p>Por favor, recarga la página</p>
+          <pre style="margin-top: 1rem; text-align: left; background: #1a1a1a; padding: 1rem; border-radius: 8px;">
+            ${error instanceof Error ? error.message : 'Error desconocido'}
+          </pre>
+        </div>
+      `;
+    }
+  }
+}
+
+/**
+ * Configura el evento de búsqueda en el input
+ */
+function setupSearch(
+  searchInput: HTMLInputElement,
+  galleryContainer: HTMLElement
+): void {
+  searchInput.addEventListener('input', () => {
+    handleSearch(searchInput.value, galleryContainer);
+  });
+
+  // También permitir búsqueda con Enter
+  searchInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      handleSearch(searchInput.value, galleryContainer);
+    }
+  });
+}
+
+/**
+ * Maneja la búsqueda de GIFs
+ */
+function handleSearch(searchTerm: string, container: HTMLElement): void {
+  const trimmedTerm = searchTerm.trim();
+
+  // Si el campo está vacío, mostrar todos los GIFs
+  if (trimmedTerm === '') {
+    const allGifs = getAllGifs();
+    renderGifCards(allGifs, container);
+    console.log('🔄 Mostrando todos los GIFs');
+    return;
+  }
+
+  // Buscar GIFs que coincidan con el término
+  const results = searchGifs(trimmedTerm);
+  renderGifCards(results, container);
+
+  console.log(`🔍 Búsqueda: "${trimmedTerm}" - ${results.length} resultado(s)`);
+}
+
+// Inicializar la aplicación cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+

@@ -14,15 +14,19 @@
         <p class="app-subtitle">Galería local de GIFs con búsqueda inteligente</p>
       </header>
 
-      <div class="search-container">
-        <input
-          type="search"
-          id="search-input"
-          class="search-input"
-          placeholder="🔍 Buscar por título, autor, etiquetas o descripción..."
-          aria-label="Buscar GIFs"
-        />
-      </div>
+      <form id="search-form" class="search-container">
+  <input
+    type="search"
+    id="search-input"
+    class="search-input"
+    placeholder="Buscar por título, autor, etiquetas o descripción..."
+    aria-label="Buscar GIFs"
+    autocomplete="off"
+  />
+  <button type="submit" class="search-button">Buscar</button>
+</form>
+
+<p id="search-status" class="search-status" aria-live="polite"></p>
 
       <main id="gif-gallery" class="gif-gallery">
         <!-- Los GIFs se cargan dinámicamente aquí -->
